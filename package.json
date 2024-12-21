@@ -1,0 +1,14 @@
+{
+	"name": "auto-commit-and-version",
+	"version": "1.0.0",
+	"description": "The action checks if github action steps made changes that need to be commit to the repo and bumps the config json version",
+	"main": "index.js",
+	"author": "Phil Faciana <phil@renderdev.com> (https://renderdev.com/)",
+	"license": "MIT",
+	"dependencies": {
+		"@actions/core": "^1.11",
+		"@actions/exec": "^1.1",
+		"detect-indent": "^6.1",
+		"semver": "^7.6"
+	}
+}

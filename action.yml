@@ -16,6 +16,10 @@ inputs:
     description: Patterns to exclude files from git status check (defaults to common lockfiles)
     required: false
     default: ':!*.lock :!*.lockfile :!*.lock[A-Za-z0-9] :!*[.-]lock.* :!*.snapshot :!*.resolved :!*go.sum'
+  clean-excluded-files:
+    description: If excluded files are the only change, should they be cleaned up?
+    required: false
+    default: yes
 outputs:
   changes-made:
     description: Boolean-like result if changes were committed
@@ -48,3 +52,4 @@ runs:
         CONFIG_JSON: ${{ inputs.config-json }}
         COMMIT_MESSAGE: ${{ inputs.commit-message }}
         EXCLUDE_FILES: ${{ inputs.exclude-files }}
+        CLEAN_EXCLUDED_FILES: ${{ inputs.clean-excluded-files }}

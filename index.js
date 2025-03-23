@@ -15,20 +15,28 @@ async function run() {
 		const releaseType = process.env.RELEASE_TYPE || 'patch'
 		const configJson = process.env.CONFIG_JSON || 'package.json'
 		const excludeFiles = process.env.EXCLUDE_FILES || ':!*.lock :!*.lockfile :!*.lock[A-Za-z0-9] :!*[.-]lock.* :!*.snapshot :!*.resolved :!*go.sum'
+		const cleanExcludedFiles = process.env.CLEAN_EXCLUDED_FILES || 'yes'
 
 		// Check for changes
 		let gitStatusArgs = ['status', '--porcelain']
-		
+
 		// Use exclude patterns if EXCLUDE_FILES is not falsy
 		if (getBooleanInput(excludeFiles)) {
 			gitStatusArgs = [...gitStatusArgs, '--untracked-files=no', '--', '.', ...excludeFiles.split(' ')]
 		}
-		
+
 		let { stdout: hasChanges } = await exec.getExecOutput('git', gitStatusArgs)
 		hasChanges = !!hasChanges.trim().length
 		console.log('hasChanges', hasChanges)
 
 		if (!hasChanges) {
+			if (getBooleanInput(cleanExcludedFiles)) {
+				console.log('No tracked changes detected. Cleaning up any excluded files...')
+				// Restore working tree files from index
+				await exec.exec('git', ['restore', '.'])
+				await exec.exec('git', ['checkout', '--', '.'])
+				await exec.exec('git', ['clean', '-fd'])
+			}
 			core.setOutput('changes-made', '')
 			return console.log(`No changes detected.`)
 		}

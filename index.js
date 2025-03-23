@@ -14,9 +14,17 @@ async function run() {
 		const commitMessage = process.env.COMMIT_MESSAGE || 'Automated commit by `auto-commit-and-version` action'
 		const releaseType = process.env.RELEASE_TYPE || 'patch'
 		const configJson = process.env.CONFIG_JSON || 'package.json'
+		const excludeFiles = process.env.EXCLUDE_FILES || ':!*.lock :!*.lockfile :!*.lock[A-Za-z0-9] :!*[.-]lock.* :!*.snapshot :!*.resolved :!*go.sum'
 
 		// Check for changes
-		let { stdout: hasChanges } = await exec.getExecOutput('git', ['status', '--porcelain'])
+		let gitStatusArgs = ['status', '--porcelain']
+		
+		// Use exclude patterns if EXCLUDE_FILES is not falsy
+		if (getBooleanInput(excludeFiles)) {
+			gitStatusArgs = [...gitStatusArgs, '--untracked-files=no', '--', '.', ...excludeFiles.split(' ')]
+		}
+		
+		let { stdout: hasChanges } = await exec.getExecOutput('git', gitStatusArgs)
 		hasChanges = !!hasChanges.trim().length
 		console.log('hasChanges', hasChanges)
 

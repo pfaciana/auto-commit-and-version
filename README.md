@@ -88,6 +88,7 @@ This workflow checks out the code, performs some changes, and then uses the Comm
 | `config-json`    | Path to the configuration JSON file to update the version in (e.g., `package.json`).   | No       | `package.json`                              |
 | `release-type`   | The type of semantic version increment to perform (`patch`, `minor`, `major`).         | No       | `patch`                                     |
 | `commit-message` | Custom message for the commit. Use `{version}` to include the new version dynamically. | No       | `Automated commit by commit-changes action` |
+| `exclude-files`  | Patterns to exclude files from git status check (e.g., lock files).                    | No       | `:!*.lock :!*.lockfile :!*.lock[A-Za-z0-9] :!*[.-]lock.* :!*.snapshot :!*.resolved :!*go.sum` |
 
 ### Outputs
 
@@ -104,3 +105,15 @@ A: If the action detects no uncommitted changes, it will exit without making any
 ### Q: What if I don't want to update the version in any JSON file?
 
 A: If you don't want to update any JSON file, you can set either the `config-json` or `release-type` inputs to a falsy-like value (`''`, `undefined`, `null`, `false`, `0`, `no`, `off`). The action will still commit any changes in the repository without modifying version information.
+
+### Q: How can I customize which files are checked for changes?
+
+A: You can use the `exclude-files` input to specify patterns of files to exclude from the git status check. By default, common lock files and generated files are excluded. You can customize this by providing your own git-compatible exclusion patterns. For example, to exclude node_modules and build directories, you could use `:!node_modules/ :!build/`.
+
+### Q: What if I don't want to exclude any files from the git status check?
+
+A: To check all files in the git status, you can set the `exclude-files` input to a falsy-like value (`''`, `undefined`, `null`, `false`, `0`, `no`, `off`). This will ensure no files are excluded from the git status check.
+
+### Q: How can I add my own custom files to the exclusion list?
+
+A: You can append your custom file patterns to the default exclusion list. For example, if you have custom files with patterns like `*.customlock` or `custom.lock`, you can set `exclude-files` to `:!*.customlock :!custom.lock`.

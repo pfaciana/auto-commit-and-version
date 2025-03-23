@@ -12,6 +12,10 @@ inputs:
     description: Custom message for the commit. Use {version} to include the new version dynamically
     required: false
     default: ''
+  exclude-files:
+    description: Patterns to exclude files from git status check (defaults to common lockfiles)
+    required: false
+    default: ':!*.lock :!*.lockfile :!*.lock[A-Za-z0-9] :!*[.-]lock.* :!*.snapshot :!*.resolved :!*go.sum'
 outputs:
   changes-made:
     description: Boolean-like result if changes were committed
@@ -43,3 +47,4 @@ runs:
         RELEASE_TYPE: ${{ inputs.release-type }}
         CONFIG_JSON: ${{ inputs.config-json }}
         COMMIT_MESSAGE: ${{ inputs.commit-message }}
+        EXCLUDE_FILES: ${{ inputs.exclude-files }}
